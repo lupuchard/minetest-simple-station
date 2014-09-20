@@ -1,0 +1,6 @@
+chunksize = 5
+mg_flags = trees, caves, nodungeons, noflat, light
+mg_name = singlenode
+seed = 4246995607056678885
+water_level = 1
+[end_of_params]
