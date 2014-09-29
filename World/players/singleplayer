@@ -1,45 +1,45 @@
 breath = 65535
 hp = 20
 name = singleplayer
-pitch = 23.1
-position = (381.74,10245,-632.41)
+pitch = 16.54
+position = (541.75,10245,-657.44)
 version = 1
-yaw = -86.56
+yaw = -181.64
 PlayerArgsEnd
 List main 32
 Width 0
-Item default:glass
-Item ss13:spawn 5
-Item default:junglewood 3
+Item default:glass 5
+Item ss13:llmaint_closed
+Item ss13:lrmaint_closed
+Item ss13:ulmaint_closed
+Item ss13:urmaint_closed
+Item dongle:dongle
+Item farming:hoe_steel 1 3290
+Empty
+Item stairs:slab_stonebrick
 Item default:chest
+Item default:junglewood 2
+Item farming:seed_wheat
 Item default:steelblock 99
 Item default:sandstonebrick
-Item default:ice
-Item default:torch 4
-Item stairs:slab_stonebrick
-Item stairs:slab_brick
-Item default:brick
-Empty
-Item default:chest
-Empty
 Item doors:trapdoor 2
 Item default:furnace
 Empty
+Item ss13:spawn 5
+Item farming:seed_cotton
 Empty
 Item stairs:stair_stonebrick
-Item xpanes:pane
-Empty
-Empty
+Item default:ice
 Item default:tree
 Item default:obsidian
 Item default:bronzeblock
 Item default:stonebrick
-Empty
+Item dye:grey
 Item stairs:slab_junglewood 6
 Item default:bookshelf
-Empty
-Empty
-Item farming:hoe_steel 1 2303
+Item default:dirt
+Item doors:door_steel
+Item default:torch 4
 EndInventoryList
 List craft 9
 Width 3

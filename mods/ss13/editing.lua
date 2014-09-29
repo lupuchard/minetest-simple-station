@@ -64,3 +64,42 @@ minetest.register_chatcommand("setcorner", {
 		minetest.chat_send_player(name, "Corner " .. corner .. " set to " .. minetest.pos_to_string(player:getpos()) .. ".")
 	end,
 })
+
+equipment:enable({
+{
+	name = "facegear",
+	pos = {x = 0, y = 0}
+},
+{
+	name = "headgear",
+	pos = {x = 1, y = 0}
+},
+{
+	name = "headset",
+	pos = {x = 2, y = 0}
+},
+{
+	name = "gloves",
+	pos = {x = 0, y = 1}
+},
+{
+	name = "shirt",
+	pos = {x = 1, y = 1}
+},
+{
+	name = "armor",
+	pos = {x = 2, y = 1}
+},
+{
+	name = "shoes",
+	pos = {x = 0, y = 2}
+},
+{
+	name = "pants",
+	pos = {x = 1, y = 2}
+},
+{
+	name = "card",
+	pos = {x = 2, y = 2}
+},
+}, 3, 4)

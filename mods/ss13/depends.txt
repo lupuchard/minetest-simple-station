@@ -1,2 +1,4 @@
+default
 hunger
 worldedit
+equipment

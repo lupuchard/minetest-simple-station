@@ -35,6 +35,8 @@ local CPY_OFF = 1024
 corn1off = vector.new(corn1.x, corn1.y + CPY_OFF, corn1.z)
 corn2off = vector.new(corn2.x, corn2.y + CPY_OFF, corn2.z)
 
+dofile(minetest.get_modpath("ss13").."/airlocks.lua")
+
 if editingMode then
 	dofile(minetest.get_modpath("ss13").."/editing.lua")
 
