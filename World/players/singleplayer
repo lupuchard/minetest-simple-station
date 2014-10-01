@@ -1,42 +1,42 @@
 breath = 65535
 hp = 20
 name = singleplayer
-pitch = 16.54
-position = (541.75,10245,-657.44)
+pitch = 16.68
+position = (502.11,10245,-666.25)
 version = 1
-yaw = -181.64
+yaw = -90.33
 PlayerArgsEnd
 List main 32
 Width 0
-Item default:glass 5
-Item ss13:llmaint_closed
-Item ss13:lrmaint_closed
-Item ss13:ulmaint_closed
-Item ss13:urmaint_closed
-Item dongle:dongle
-Item farming:hoe_steel 1 3290
+Item ss13:llsec_closed
 Empty
-Item stairs:slab_stonebrick
+Empty
+Item default:steelblock
+Item default:obsidian_glass
+Item default:glass 5
+Item ss13:idcard 1 0 "return { [\"access\"] = { \"security\", \"everyone\" }, [\"owner\"] = \"Luke\" }"
+Item dongle:dongle
+Item ss13:spawn 5
 Item default:chest
 Item default:junglewood 2
-Item farming:seed_wheat
-Item default:steelblock 99
-Item default:sandstonebrick
-Item doors:trapdoor 2
+Empty
+Item ss13:ulsec_closed
+Item ss13:ursec_closed
+Empty
 Item default:furnace
+Item ss13:ulmaint_closed
+Item ss13:urmaint_closed
+Item doors:door_glass
+Item farming:hoe_steel 1 3290
 Empty
-Item ss13:spawn 5
-Item farming:seed_cotton
-Empty
-Item stairs:stair_stonebrick
-Item default:ice
+Item default:sandstonebrick
 Item default:tree
 Item default:obsidian
-Item default:bronzeblock
-Item default:stonebrick
+Item ss13:llmaint_closed
+Item ss13:lrmaint_closed
 Item dye:grey
 Item stairs:slab_junglewood 6
-Item default:bookshelf
+Empty
 Item default:dirt
 Item doors:door_steel
 Item default:torch 4

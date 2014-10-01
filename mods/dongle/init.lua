@@ -39,7 +39,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 end)
 
 minetest.register_craftitem("dongle:dongle", {
-	description = "Donger",
+	description = "Dongle",
 	stack_max = 1,
 	inventory_image = "usb_dongle.png",
 	on_place = function(itemstack, placer, pointed_thing)
