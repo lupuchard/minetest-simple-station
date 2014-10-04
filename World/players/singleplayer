@@ -1,45 +1,45 @@
-breath = 65535
+breath = 11
 hp = 20
 name = singleplayer
-pitch = 16.68
-position = (502.11,10245,-666.25)
+pitch = -8.7
+position = (479.37,10205,-749.74)
 version = 1
-yaw = -90.33
+yaw = 305.43
 PlayerArgsEnd
 List main 32
 Width 0
-Item ss13:llsec_closed
-Empty
-Empty
-Item default:steelblock
-Item default:obsidian_glass
-Item default:glass 5
-Item ss13:idcard 1 0 "return { [\"access\"] = { \"security\", \"everyone\" }, [\"owner\"] = \"Luke\" }"
+Item ss13:power_radiator
+Item ss13:idcard 1 0 "return { [\"access\"] = { \"security\", \"kitchen\", \"botany\", \"secure\", \"engineering\" }, [\"owner\"] = \"Luke\" }"
+Item default:steelblock 2
+Item ss13:lamp_off
+Item technic:mv_cable0
+Item default:torch 6
 Item dongle:dongle
+Item technic:switching_station
+Empty
+Item moreblocks:circular_saw
+Empty
+Item technic:lv_cable0
+Item technic:lv_compressor
+Item default:glass 5
+Empty
+Item technic:hv_cable0
+Item technic:mv_battery_box0
+Empty
+Item technic:supply_converter
+Empty
 Item ss13:spawn 5
-Item default:chest
-Item default:junglewood 2
+Item default:ladder
+Item ss13:uranium_fuel 2
+Item screwdriver:screwdriver3 1 6867 3
 Empty
-Item ss13:ulsec_closed
-Item ss13:ursec_closed
 Empty
-Item default:furnace
-Item ss13:ulmaint_closed
-Item ss13:urmaint_closed
-Item doors:door_glass
-Item farming:hoe_steel 1 3290
 Empty
-Item default:sandstonebrick
-Item default:tree
-Item default:obsidian
-Item ss13:llmaint_closed
-Item ss13:lrmaint_closed
-Item dye:grey
-Item stairs:slab_junglewood 6
 Empty
-Item default:dirt
-Item doors:door_steel
-Item default:torch 4
+Empty
+Empty
+Empty
+Item wrench:wrench
 EndInventoryList
 List craft 9
 Width 3

@@ -1,4 +1,6 @@
 
+ss13 = {}
+
 local function vector_floor(vec)
 	return vector.new(math.floor(vec.x), math.floor(vec.y), math.floor(vec.z))
 end
@@ -19,7 +21,7 @@ local corn2 = vector_floor(datas.space_corners[2])
 corn1, corn2 = worldedit.sort_pos(corn1, corn2)
 
 
-ROLES = {
+ss13.ROLES = {
 	{
 		name = "farmer",
 		access = {"hydroponics"},
@@ -52,15 +54,9 @@ local CPY_OFF = 512
 local corn1off = vector.new(corn1.x, corn1.y + CPY_OFF, corn1.z)
 local corn2off = vector.new(corn2.x, corn2.y + CPY_OFF, corn2.z)
 
-
-print("BALLER")
-
-
 minetest.register_privilege("gm", "Player can start and end games whenever.")
 minetest.register_privilege("edit_ship", "Player can save changes to the spaceship.")
 
-
-print("SPAZZTASTIC")
 
 local function saveData()
 	local dataFile = assert(io.open(dataPath, "w"))
@@ -92,16 +88,15 @@ minetest.register_chatcommand("setcorner", {
 	end,
 })
 
-print("WHOOPITY")
-
 if editingMode then
 	dofile(minetest.get_modpath("ss13").."/editor_nodes.lua")
 else
 	dofile(minetest.get_modpath("ss13").."/editor_nodes_locked.lua")
 end
 dofile(minetest.get_modpath("ss13").."/airlocks.lua")
-
-print("ALLRITYTHEN")
+dofile(minetest.get_modpath("ss13").."/nuclear_reactor.lua")
+dofile(minetest.get_modpath("ss13").."/power_radiator.lua")
+dofile(minetest.get_modpath("ss13").."/lighting.lua")
 
 local inGame = false
 local timer = 0
@@ -122,9 +117,9 @@ local function startGame()
 			playerDatas[playerName] = {}
 			playerData = playerDatas[playerName]
 		end
-		playerData.role = math.random(#ROLES)
+		playerData.role = math.random(#ss13.ROLES)
 
-		minetest.chat_send_player(playerName, "You are the " .. ROLES[playerData.role].name .. "!")
+		minetest.chat_send_player(playerName, "You are the " .. ss13.ROLES[playerData.role].name .. "!")
 	end
 
 	inGame = true
@@ -187,6 +182,5 @@ end
 if editingMode then
 	minetest.register_on_shutdown(function()
 		saveData()
-		saveSpaceship()
 	end)
 end

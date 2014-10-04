@@ -3,6 +3,13 @@
 creative_inventory = {}
 creative_inventory.creative_inventory_size = 0
 
+local current_take_counts = {}
+local function get_current_take_count(player)
+	local current = current_take_counts[player:get_player_name()]
+	if current == nil then return 1 end
+	return current
+end
+
 -- Create detached creative inventory after loading all mods
 minetest.after(0, function()
 	local inv = minetest.create_detached_inventory("creative", {
@@ -30,6 +37,11 @@ minetest.after(0, function()
 		on_take = function(inv, listname, index, stack, player)
 			--print(player:get_player_name().." takes item from creative inventory; listname="..dump(listname)..", index="..dump(index)..", stack="..dump(stack))
 			if stack then
+				amount = get_current_take_count(player)
+				if amount > 1 then
+					player:get_inventory():add_item("main", {name = stack:get_name(), count = amount - 1, wear = 0, metadata = ""})
+				end
+
 				minetest.log("action", player:get_player_name().." takes "..dump(stack:get_name()).." from creative inventory")
 				--print("stack:get_name()="..dump(stack:get_name())..", stack:get_count()="..dump(stack:get_count()))
 			end
@@ -69,7 +81,7 @@ local trash = minetest.create_detached_inventory("creative_trash", {
 trash:set_size("main", 1)
 
 
-creative_inventory.set_creative_formspec = function(player, start_i, pagenum)
+creative_inventory.set_creative_formspec = function(player, start_i, pagenum, take_count)
 	pagenum = math.floor(pagenum)
 	local pagemax = math.floor((creative_inventory.creative_inventory_size-1) / (6*4) + 1)
 	player:set_inventory_formspec(
@@ -86,6 +98,9 @@ creative_inventory.set_creative_formspec = function(player, start_i, pagenum)
 			"label[2.0,6.55;"..tostring(pagenum).."/"..tostring(pagemax).."]"..
 			"button[0.3,6.5;1.6,1;creative_prev;<<]"..
 			"button[2.7,6.5;1.6,1;creative_next;>>]"..
+			"button[4.5,0.5;0.5,1;take_dec;-]"..
+			"button[6,0.5;0.5,1;take_inc;+]"..
+			"label[5.3,0.6;" .. tostring(take_count) .. "]"..
 			"label[5,1.5;Trash:]"..
 			"list[detached:creative_trash;main;5,2;1,1;]"..
 			default.get_hotbar_bg(5,3.5)
@@ -96,12 +111,27 @@ minetest.register_on_joinplayer(function(player)
 	if not minetest.setting_getbool("creative_mode") then
 		return
 	end
-	creative_inventory.set_creative_formspec(player, 0, 1)
+	creative_inventory.set_creative_formspec(player, 0, 1, 1)
 end)
 minetest.register_on_player_receive_fields(function(player, formname, fields)
+	print(formname)
 	if not minetest.setting_getbool("creative_mode") then
 		return
 	end
+
+	if fields.take_dec then
+		local current = get_current_take_count(player)
+		if current > 1 then 
+			current_take_counts[player:get_player_name()] = current - 1
+		end
+	end
+	if fields.take_inc then
+		local current = get_current_take_count(player)
+		if current < 99 then
+			current_take_counts[player:get_player_name()] = current + 1
+		end
+	end
+
 	-- Figure out current page from formspec
 	local current_page = 0
 	local formspec = player:get_inventory_formspec()
@@ -126,7 +156,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		start_i = 0
 	end
 
-	creative_inventory.set_creative_formspec(player, start_i, start_i / (6*4) + 1)
+	creative_inventory.set_creative_formspec(player, start_i, start_i / (6*4) + 1, get_current_take_count(player))
 end)
 
 if minetest.setting_getbool("creative_mode") then

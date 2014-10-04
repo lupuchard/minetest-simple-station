@@ -1,13 +1,12 @@
 
-local accesses = {"noone", "everyone", "cabin", "hydroponics", "kitchen", "security"}
-
+ss13.ACCESSES = {"noone", "everyone", "cabin", "hydroponics", "kitchen", "security"}
 
 --------------
 --------------
 -- ID CARDS --
 --------------
 --------------
-Card = {}
+ss13.Card = {}
 
 -- The idcard is used for identification and airlock access.
 minetest.register_craftitem("ss13:idcard", {
@@ -43,7 +42,7 @@ minetest.register_craftitem("ss13:idcard", {
 -- @tparam string owner   The name put on the id.
 -- @tparam array accesses Strings for the places the card should have access to.
 -- @treturn ItemStack The created idcard.
-function Card.create_id(owner, accesses)
+function ss13.Card.create_id(owner, accesses)
 	assert(type(owner) == "string")
 	assert(type(accesses) == "table")
 	local metadata = minetest.serialize({owner = owner, access = accesses})
@@ -54,7 +53,7 @@ end
 -- @tparam ItemStack itemstack May or may not be a card.
 -- @tparam string    access    Location to check for access to.
 -- @treturn bool Whether or not access can be granted.
-function Card.has_access(itemstack, access)
+function ss13.Card.has_access(itemstack, access)
 	if itemstack == nil then return false end
 	local meta = minetest.deserialize(itemstack:get_metadata())
 	if type(meta) == "table" and type(meta.access) == "table" then
@@ -80,7 +79,7 @@ minetest.register_chatcommand("create_id", {
 				table.insert(accesses, val)
 			end
 		end
-		local id = Card.create_id(parameters[1], accesses)
+		local id = ss13.Card.create_id(parameters[1], accesses)
 		player:get_inventory():add_item("main", id)
 	end,
 })
@@ -91,47 +90,44 @@ minetest.register_chatcommand("create_id", {
 -- AIRLOCKS --
 --------------
 --------------
-Airlock = {}
+ss13.Airlock = {}
 
-Airlock.USE_DELAY = 0.5
-Airlock.AUTOMATIC_CLOSE_DELAY = 5.0
+ss13.Airlock.USE_DELAY = 0.5
+ss13.Airlock.AUTOMATIC_CLOSE_DELAY = 5.0
 
-function Airlock.set_state(pos, state)
+function ss13.Airlock.set_state(pos, state)
 	local meta = minetest.get_meta(pos)
 	meta:set_string("al_state", state)
 end
 
 -- Closes the given airlock block. Only one block.
-function Airlock.close(pos)
+function ss13.Airlock.close(pos)
 	local meta = minetest.get_meta(pos)
 	if meta:get_string("al_state") == "open" then
-		local meta_table = meta:to_table()
-		local node = minetest.get_node(pos)
-		minetest.set_node(pos, {name = meta_table.fields.al_closed, param1 = node.param1, param2 = node.param2})
-		meta_table.fields.al_state = "closed_delay"
-		minetest.get_meta(pos):from_table(meta_table)
-		minetest.after(Airlock.USE_DELAY, Airlock.set_state, pos, "closed")
+		local def = minetest.registered_nodes[minetest.get_node(pos).name]
+		technic.swap_node(pos, def.closed_node)
+		meta:set_string("al_state", "closed_delay")
+		minetest.after(ss13.Airlock.USE_DELAY, ss13.Airlock.set_state, pos, "closed")
 	end
 end
 
 -- Opens the given airlock block. Only one block.
-function Airlock.open(pos)
+function ss13.Airlock.open(pos)
 	local meta = minetest.get_meta(pos)
 	if meta:get_string("al_state") == "closed" then
-		local meta_table = meta:to_table()
-		local node = minetest.get_node(pos)
-		minetest.set_node(pos, {name = meta_table.fields.al_open, param1 = node.param1, param2 = node.param2})
-		meta_table.fields.al_state = "open_delay"
-		minetest.get_meta(pos):from_table(meta_table)
-		minetest.after(Airlock.USE_DELAY, Airlock.set_state, pos, "open")
-		minetest.after(Airlock.AUTOMATIC_CLOSE_DELAY, Airlock.close, pos)
+		local def = minetest.registered_nodes[minetest.get_node(pos).name]
+		print(tostring(pos.x).." "..tostring(pos.y).." "..tostring(pos.y).." "..tostring(def.open_node))
+		technic.swap_node(pos, def.open_node)
+		meta:set_string("al_state", "open_delay")
+		minetest.after(ss13.Airlock.USE_DELAY, ss13.Airlock.set_state, pos, "open")
+		minetest.after(ss13.Airlock.AUTOMATIC_CLOSE_DELAY, ss13.Airlock.close, pos)
 	end
 end
 
 -- Tells whether or not the airlock at the given position
 -- grants access to the given player if the player is holding
 -- the given itemstack.
-function Airlock.has_access(pos, player, itemstack)
+function ss13.Airlock.has_access(pos, player, itemstack)
 	local meta = minetest.get_meta(pos)
 	local access = meta:get_string("al_access")
 
@@ -139,9 +135,9 @@ function Airlock.has_access(pos, player, itemstack)
 		return false
 	elseif access == "everyone" then
 		return true
-	elseif Card.has_access(itemstack, access) then
+	elseif ss13.Card.has_access(itemstack, access) then
 		return true
-	elseif Card.has_access(equipment:get_equipped(player, "card"), access) then
+	elseif ss13.Card.has_access(equipment:get_equipped(player, "card"), access) then
 		return true
 	end
 
@@ -150,7 +146,7 @@ end
 
 -- Returns all the airlocks next to the given position
 -- (including possibly the one at the given position)
-function Airlock.get_adjacent(pos)
+function ss13.Airlock.get_adjacent(pos)
 	airlocks = {}
 	for x = -1, 1 do
 		for y = -1, 1 do
@@ -178,7 +174,7 @@ end
 --  bottom = The bottom of the airlock node (optional).
 -- }
 -- @tparam bool   left        Whether this airlock opens to the left or the right.
-function Airlock.register(name, tiles, left)
+function ss13.Airlock.register(name, tiles, left)
 	local closed_tile = tiles.closed or tiles.front
 	local open_tile   = tiles.open   or closed_tile
 	local side_tile   = tiles.side   or closed_tile
@@ -198,11 +194,10 @@ function Airlock.register(name, tiles, left)
 		paramtype2 = "facedir",
 		groups = {cracky = 1, airlock = 1},
 		use_texture_alpha = true,
+		open_node = name.."_open",
 		after_place_node = function(pos, placer, itemstack, pointed_thing)
 			local meta = minetest.get_meta(pos)
 			meta:set_string("al_state", "closed")
-			meta:set_string("al_open", name.."_open")
-			meta:set_string("al_closed", name.."_closed")
 			meta:set_string("al_access", "unknown")
 		end,
 		on_rightclick = function(pos, node, player, itemstack, pointed_thing)
@@ -211,18 +206,18 @@ function Airlock.register(name, tiles, left)
 				return itemstack
 			end
 
-			local airlocks = Airlock.get_adjacent(pos)
+			local airlocks = ss13.Airlock.get_adjacent(pos)
 			
 			local has_access = false
 			for i, apos in ipairs(airlocks) do
-				if Airlock.has_access(apos, player, itemstack) then
+				if ss13.Airlock.has_access(apos, player, itemstack) then
 					has_access = true
 				end
 			end
 			
 			if has_access then
 				for i, apos in ipairs(airlocks) do
-					Airlock.open(apos)
+					ss13.Airlock.open(apos)
 					minetest.sound_play("airlock", {pos = apos, gain = 0.2})
 				end
 			end
@@ -253,24 +248,25 @@ function Airlock.register(name, tiles, left)
 		groups = {cracky = 1, airlock = 1, not_in_creative_inventory = 1},
 		walkable  = true,
 		pointable = true,
+		closed_node = name.."_closed",
 		on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 			local meta = minetest.get_meta(pos)
 			if meta:get_string("al_state") == "open_delay" then
 				return itemstack
 			end
 
-			local airlocks = Airlock.get_adjacent(pos)
+			local airlocks = ss13.Airlock.get_adjacent(pos)
 			
 			local has_access = false
 			for i, apos in ipairs(airlocks) do
-				if Airlock.has_access(apos, player, itemstack) then
+				if ss13.Airlock.has_access(apos, player, itemstack) then
 					has_access = true
 				end
 			end
 			
 			if has_access then
 				for i, apos in ipairs(airlocks) do
-					Airlock.close(apos)
+					ss13.Airlock.close(apos)
 				end
 			end
 
@@ -279,22 +275,39 @@ function Airlock.register(name, tiles, left)
 	})
 end
 
--- maintenance airlocks
-Airlock.register("ss13:llmaint", {closed = "al_llcmaint.png", open = "al_llomaint.png", side = "dot.png"}, true)
-Airlock.register("ss13:lrmaint", {closed = "al_lrcmaint.png", open = "al_lromaint.png", side = "dot.png"}, false)
-Airlock.register("ss13:ulmaint", {closed = "al_ulcmaint.png", open = "al_ulomaint.png", side = "dot.png"}, true)
-Airlock.register("ss13:urmaint", {closed = "al_urcmaint.png", open = "al_uromaint.png", side = "dot.png"}, false)
-Airlock.register("ss13:llmaintg", {closed = "al_llcmaintglass.png", open = "al_llomaint.png", side = "dot.png", top    = "al_maintglass_side.png"} , true)
-Airlock.register("ss13:lrmaintg", {closed = "al_lrcmaintglass.png", open = "al_lromaint.png", side = "dot.png", top    = "al_maintglass_side.png^[transformFX"} , false)
-Airlock.register("ss13:ulmaintg", {closed = "al_ulcmaintglass.png", open = "al_ulomaint.png", side = "dot.png", bottom = "al_maintglass_side.png"} , true)
-Airlock.register("ss13:urmaintg", {closed = "al_urcmaintglass.png", open = "al_uromaint.png", side = "dot.png", bottom = "al_maintglass_side.png^[transformFX"} , false)
+local function register_airlock_type(type, name, side, glass)
+	glass = glass or ""
+	local nodename = "ss13:"..type..name
+	if glass ~= "" then nodename = nodename.."g" end
 
--- security airlocks
-Airlock.register("ss13:llsec", {closed = "al_llcsec.png", open = "al_llosec.png", side = "rdot.png"}, true)
-Airlock.register("ss13:lrsec", {closed = "al_lrcsec.png", open = "al_lrosec.png", side = "rdot.png"}, false)
-Airlock.register("ss13:ulsec", {closed = "al_ulcsec.png", open = "al_ulosec.png", side = "rdot.png"}, true)
-Airlock.register("ss13:ursec", {closed = "al_urcsec.png", open = "al_urosec.png", side = "rdot.png"}, false)
-Airlock.register("ss13:llsecg", {closed = "al_llcsecglass.png", open = "al_llosec.png", side = "rdot.png", top    = "al_secglass_side.png"}, true)
-Airlock.register("ss13:lrsecg", {closed = "al_lrcsecglass.png", open = "al_lrosec.png", side = "rdot.png", top    = "al_secglass_side.png^[transformFX"}, false)
-Airlock.register("ss13:ulsecg", {closed = "al_ulcsecglass.png", open = "al_ulosec.png", side = "rdot.png", bottom = "al_secglass_side.png"}, true)
-Airlock.register("ss13:ursecg", {closed = "al_urcsecglass.png", open = "al_urosec.png", side = "rdot.png", bottom = "al_secglass_side.png^[transformFX"}, false)
+	local tiles = {
+		closed = "al_"..type.."c"..name..glass..".png",
+		open   = "al_"..type.."o"..name..       ".png",
+		side   = side..".png",
+	}
+
+	if glass ~= "" then
+		local str = "al_"..name..glass.."_side.png"
+		if type:sub(2, 2) == "r" then
+			str = str.."^[transformFX"
+		end
+		if type:sub(1, 1) == "l" then
+			 tiles.top    = str
+		else tiles.bottom = str end
+	end
+
+	ss13.Airlock.register(nodename, tiles, type:sub(2, 2) == "l")
+end
+local function register_airlock_group(name, side, glass)
+	register_airlock_type("ll", name, side, glass)
+	register_airlock_type("lr", name, side, glass)
+	register_airlock_type("ul", name, side, glass)
+	register_airlock_type("ur", name, side, glass)
+end
+
+register_airlock_group("maint", "dot")
+register_airlock_group("maint", "dot", "glass")
+register_airlock_group("sec", "rdot")
+register_airlock_group("sec", "rdot", "glass")
+register_airlock_group("glass", "dot")
+register_airlock_group("wood", "bdot")

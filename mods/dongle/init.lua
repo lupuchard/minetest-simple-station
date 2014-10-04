@@ -24,7 +24,7 @@ function dongle:edit(player, pos)
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-	if formname == "dongle:dongle" then
+	if formname == "dongle:dongle" and fields.p ~= nil then
 		local pos = minetest.parse_json(fields.p)
 		local meta_table = minetest.parse_json(fields.meta)
 		if meta_table == nil then return end
